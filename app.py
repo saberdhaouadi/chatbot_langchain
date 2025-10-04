@@ -1,8 +1,10 @@
+               
+       
 import sys
 import os
 from pathlib import Path
 
-# Add project root to Python path - THIS IS THE FIX
+# Add project root to Python path
 current_dir = os.path.dirname(os.path.abspath(__file__))
 if current_dir not in sys.path:
     sys.path.insert(0, current_dir)
@@ -15,14 +17,12 @@ from src.embeddings_manager import EmbeddingsManager
 from src.chat_engine import ChatEngine
 from src.utils import save_uploaded_file, clear_chat_history
 
-# Rest of your code...
-
 # Load environment variables
 load_dotenv()
 
 # Page configuration
 st.set_page_config(
-    page_title="Document Chatbot",
+    page_title="Document Chatbot with Claude",
     page_icon="🤖",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -37,8 +37,8 @@ if "documents_loaded" not in st.session_state:
     st.session_state.documents_loaded = False
 
 # Title and description
-st.title("🤖 Document Chatbot")
-st.markdown("Upload PDF and Excel documents to chat with your data using AI")
+st.title("🤖 Document Chatbot with Claude")
+st.markdown("Upload PDF and Excel documents to chat with your data using Anthropic's Claude AI")
 
 # Sidebar for document upload
 with st.sidebar:
@@ -78,7 +78,7 @@ with st.sidebar:
                     embeddings_manager = EmbeddingsManager()
                     vector_store = embeddings_manager.create_vector_store(chunks)
                     
-                    # Initialize chat engine
+                    # Initialize chat engine with Claude
                     st.session_state.chat_engine = ChatEngine(vector_store)
                     st.session_state.documents_loaded = True
                     
@@ -95,19 +95,68 @@ with st.sidebar:
     
     # Settings
     st.divider()
-    st.subheader("⚙️ Settings")
-    temperature = st.slider("Temperature", 0.0, 1.0, 0.0, 0.1)
-    max_tokens = st.slider("Max Response Length", 100, 2000, 500, 100)
+    st.subheader("⚙️ Claude Settings")
+    
+    # Model selection
+    claude_model = st.selectbox(
+        "Claude Model",
+        options=[
+            "claude-3-5-sonnet-20241022",
+            "claude-3-opus-20240229",
+            "claude-3-sonnet-20240229",
+            "claude-3-haiku-20240307"
+        ],
+        index=0,
+        help="Choose the Claude model to use"
+    )
+    
+    temperature = st.slider(
+        "Temperature", 
+        0.0, 1.0, 0.0, 0.1,
+        help="Higher values make output more random, lower values more focused"
+    )
+    
+    max_tokens = st.slider(
+        "Max Response Length", 
+        100, 4096, 1024, 100,
+        help="Maximum number of tokens in the response"
+    )
     
     if st.session_state.chat_engine:
         st.session_state.chat_engine.update_settings(
             temperature=temperature,
-            max_tokens=max_tokens
+            max_tokens=max_tokens,
+            model=claude_model
         )
+    
+    # Display model info
+    st.divider()
+    with st.expander("ℹ️ About Claude Models"):
+        st.markdown("""
+        **Claude 3.5 Sonnet**: Best balance of intelligence and speed
+        
+        **Claude 3 Opus**: Most capable model for complex tasks
+        
+        **Claude 3 Sonnet**: Fast and capable for most tasks
+        
+        **Claude 3 Haiku**: Fastest model for simple tasks
+        """)
 
 # Main chat interface
 if not st.session_state.documents_loaded:
     st.info("👈 Please upload and process documents to start chatting")
+    
+    # Display API key status
+    anthropic_key = os.getenv("ANTHROPIC_API_KEY")
+    openai_key = os.getenv("OPENAI_API_KEY")
+    
+    if not anthropic_key or not openai_key:
+        st.warning("⚠️ Missing API keys!")
+        st.markdown("""
+        Please ensure your `.env` file contains:
+        - `ANTHROPIC_API_KEY` - Get it from [Anthropic Console](https://console.anthropic.com/)
+        - `OPENAI_API_KEY` - Get it from [OpenAI Platform](https://platform.openai.com/api-keys) (for embeddings)
+        """)
 else:
     # Display chat messages
     for message in st.session_state.messages:
@@ -129,7 +178,7 @@ else:
         
         # Generate response
         with st.chat_message("assistant"):
-            with st.spinner("Thinking..."):
+            with st.spinner("Claude is thinking..."):
                 try:
                     response = st.session_state.chat_engine.get_response(
                         prompt,
