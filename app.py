@@ -148,14 +148,14 @@ if not st.session_state.documents_loaded:
     
     # Display API key status
     anthropic_key = os.getenv("ANTHROPIC_API_KEY")
-    openai_key = os.getenv("OPENAI_API_KEY")
     
-    if not anthropic_key or not openai_key:
-        st.warning("⚠️ Missing API keys!")
+    if not anthropic_key:
+        st.warning("⚠️ Missing API key!")
         st.markdown("""
         Please ensure your `.env` file contains:
         - `ANTHROPIC_API_KEY` - Get it from [Anthropic Console](https://console.anthropic.com/)
-        - `OPENAI_API_KEY` - Get it from [OpenAI Platform](https://platform.openai.com/api-keys) (for embeddings)
+        
+        Note: Embeddings use free open-source models (no API key needed!)
         """)
 else:
     # Display chat messages
