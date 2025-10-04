@@ -8,13 +8,13 @@ import os
 class ChatEngine:
     """Handles chat interactions with documents using LangChain and Anthropic Claude."""
     
-    def __init__(self, vector_store, model: str = "claude-3-5-sonnet-20240620", temperature: float = 0.0, max_tokens: int = 1024):
+    def __init__(self, vector_store, model: str = "claude-sonnet-4-5-20250929", temperature: float = 0.0, max_tokens: int = 1024):
         """
         Initialize the chat engine with Anthropic Claude.
         
         Args:
             vector_store: FAISS vector store for document retrieval
-            model: Anthropic Claude model to use (claude-3-5-sonnet-20241022, claude-3-opus-20240229, claude-3-haiku-20240307)
+            model: Anthropic Claude model to use (claude-sonnet-4-5-20250929, claude-opus-4-1-20250805, claude-3-5-haiku-20241022)
             temperature: Sampling temperature (0.0 to 1.0)
             max_tokens: Maximum tokens in response
         """
