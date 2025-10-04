@@ -8,7 +8,7 @@ import os
 class ChatEngine:
     """Handles chat interactions with documents using LangChain and Anthropic Claude."""
     
-    def __init__(self, vector_store, model: str = "claude-3-5-sonnet-20241022", temperature: float = 0.0, max_tokens: int = 1024):
+    def __init__(self, vector_store, model: str = "claude-3-5-sonnet-20240620", temperature: float = 0.0, max_tokens: int = 1024):
         """
         Initialize the chat engine with Anthropic Claude.
         
