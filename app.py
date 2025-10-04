@@ -1,5 +1,4 @@
                
-       
 import sys
 import os
 from pathlib import Path
@@ -101,7 +100,7 @@ with st.sidebar:
     claude_model = st.selectbox(
         "Claude Model",
         options=[
-            "claude-3-5-sonnet-20241022",
+            "claude-3-5-sonnet-20240620",
             "claude-3-opus-20240229",
             "claude-3-sonnet-20240229",
             "claude-3-haiku-20240307"
@@ -133,7 +132,7 @@ with st.sidebar:
     st.divider()
     with st.expander("ℹ️ About Claude Models"):
         st.markdown("""
-        **Claude 3.5 Sonnet**: Best balance of intelligence and speed
+        **Claude 3.5 Sonnet**: Best balance of intelligence and speed (recommended)
         
         **Claude 3 Opus**: Most capable model for complex tasks
         
