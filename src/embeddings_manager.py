@@ -1,28 +1,32 @@
 
-from langchain_openai import OpenAIEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from typing import List, Optional
 import os
 
 
 class EmbeddingsManager:
-    """Manages embeddings and vector store operations."""
+    """Manages embeddings and vector store operations using open-source models."""
     
-    def __init__(self, model: str = "text-embedding-3-small"):
+    def __init__(self, model: str = "sentence-transformers/all-MiniLM-L6-v2"):
         """
-        Initialize the embeddings manager.
+        Initialize the embeddings manager with HuggingFace embeddings.
+        Uses free, open-source embedding models - no API key required!
         
         Args:
-            model: OpenAI embedding model to use
+            model: HuggingFace embedding model to use
+                   Options:
+                   - "sentence-transformers/all-MiniLM-L6-v2" (fast, good quality)
+                   - "sentence-transformers/all-mpnet-base-v2" (better quality, slower)
+                   - "BAAI/bge-small-en-v1.5" (good for retrieval)
         """
-        api_key = os.getenv("OPENAI_API_KEY")
-        if not api_key:
-            raise ValueError("OPENAI_API_KEY not found in environment variables")
-        
-        self.embeddings = OpenAIEmbeddings(
-            model=model,
-            openai_api_key=api_key
+        # No API key needed for HuggingFace embeddings!
+        self.embeddings = HuggingFaceEmbeddings(
+            model_name=model,
+            model_kwargs={'device': 'cpu'},
+            encode_kwargs={'normalize_embeddings': True}
         )
+        print(f"✅ Loaded embedding model: {model}")
     
     def create_vector_store(self, chunks: List, persist_directory: Optional[str] = None) -> FAISS:
         """
@@ -38,6 +42,7 @@ class EmbeddingsManager:
         if not chunks:
             raise ValueError("No chunks provided to create vector store")
         
+        print(f"Creating vector store from {len(chunks)} chunks...")
         vector_store = FAISS.from_documents(
             documents=chunks,
             embedding=self.embeddings
@@ -45,6 +50,7 @@ class EmbeddingsManager:
         
         if persist_directory:
             vector_store.save_local(persist_directory)
+            print(f"✅ Vector store saved to {persist_directory}")
         
         return vector_store
     
@@ -63,6 +69,7 @@ class EmbeddingsManager:
             self.embeddings,
             allow_dangerous_deserialization=True
         )
+        print(f"✅ Vector store loaded from {persist_directory}")
         return vector_store
     
     def add_documents(self, vector_store: FAISS, chunks: List) -> FAISS:
@@ -77,6 +84,7 @@ class EmbeddingsManager:
             Updated vector store
         """
         vector_store.add_documents(chunks)
+        print(f"✅ Added {len(chunks)} new chunks to vector store")
         return vector_store
     
     def similarity_search(
