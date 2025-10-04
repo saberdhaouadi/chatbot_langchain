@@ -100,9 +100,11 @@ with st.sidebar:
     claude_model = st.selectbox(
         "Claude Model",
         options=[
-            "claude-3-5-sonnet-20240620",
-            "claude-3-opus-20240229",
-            "claude-3-sonnet-20240229",
+            "claude-sonnet-4-5-20250929",
+            "claude-opus-4-1-20250805",
+            "claude-sonnet-4-20250514",
+            "claude-3-7-sonnet-20250219",
+            "claude-3-5-haiku-20241022",
             "claude-3-haiku-20240307"
         ],
         index=0,
@@ -132,13 +134,17 @@ with st.sidebar:
     st.divider()
     with st.expander("ℹ️ About Claude Models"):
         st.markdown("""
-        **Claude 3.5 Sonnet**: Best balance of intelligence and speed (recommended)
+        **Claude Sonnet 4.5**: Best model for complex agents and coding (recommended)
         
-        **Claude 3 Opus**: Most capable model for complex tasks
+        **Claude Opus 4.1**: Exceptional for specialized complex tasks
         
-        **Claude 3 Sonnet**: Fast and capable for most tasks
+        **Claude Sonnet 4**: High-performance balanced model
         
-        **Claude 3 Haiku**: Fastest model for simple tasks
+        **Claude Sonnet 3.7**: High-performance with extended thinking
+        
+        **Claude Haiku 3.5**: Fastest model with good intelligence
+        
+        **Claude Haiku 3**: Quick and accurate for simple tasks
         """)
 
 # Main chat interface
