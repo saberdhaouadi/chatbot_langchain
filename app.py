@@ -1,12 +1,21 @@
-import streamlit as st
+import sys
 import os
 from pathlib import Path
+
+# Add project root to Python path - THIS IS THE FIX
+current_dir = os.path.dirname(os.path.abspath(__file__))
+if current_dir not in sys.path:
+    sys.path.insert(0, current_dir)
+
+import streamlit as st
 from dotenv import load_dotenv
 
 from src.document_processor import DocumentProcessor
 from src.embeddings_manager import EmbeddingsManager
 from src.chat_engine import ChatEngine
 from src.utils import save_uploaded_file, clear_chat_history
+
+# Rest of your code...
 
 # Load environment variables
 load_dotenv()
